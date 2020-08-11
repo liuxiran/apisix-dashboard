@@ -52,9 +52,11 @@ const Page: React.FC = (props) => {
         notification.success({
           message: `${
             id
-              ? formatMessage({ id: 'consumer.create.edit' })
-              : formatMessage({ id: 'consumer.create.create' })
-          } Consumer ${formatMessage({ id: 'consumer.create.success' })}`,
+              ? formatMessage({ id: 'component.global.edit' })
+              : formatMessage({ id: 'component.global.create' })
+          } ${formatMessage({ id: 'menu.consumer' })} ${formatMessage({
+            id: 'component.status.success',
+          })}`,
         });
         history.push('/consumer/list');
       })
@@ -75,7 +77,9 @@ const Page: React.FC = (props) => {
       const isValid = Object.keys(plugins).some((name) => authPluginNames.includes(name));
       if (!isValid) {
         notification.warning({
-          message: formatMessage({ id: 'consumer.create.enable.authentication.plugin' }),
+          message: formatMessage({
+            id: 'page.consumer.notification.warning.enableAuthenticationPlugin',
+          }),
         });
         return;
       }
@@ -92,15 +96,19 @@ const Page: React.FC = (props) => {
       <PageContainer
         title={`${
           (props as any).match.params.id
-            ? formatMessage({ id: 'consumer.create.edit' })
-            : formatMessage({ id: 'consumer.create.create' })
-        } Consumer`}
+            ? formatMessage({ id: 'component.global.edit' })
+            : formatMessage({ id: 'component.global.create' })
+        } ${formatMessage({ id: 'menu.consumer' })}`}
       >
         <Card bordered={false}>
           <Steps current={step - 1} style={{ marginBottom: 30 }}>
-            <Steps.Step title={formatMessage({ id: 'consumer.create.basic.information' })} />
-            <Steps.Step title={formatMessage({ id: 'consumer.create.plugin.config' })} />
-            <Steps.Step title={formatMessage({ id: 'consumer.create.preview' })} />
+            <Steps.Step
+              title={formatMessage({ id: 'component.global.steps.stepTitle.basicInformation' })}
+            />
+            <Steps.Step
+              title={formatMessage({ id: 'component.global.steps.stepTitle.pluginConfig' })}
+            />
+            <Steps.Step title={formatMessage({ id: 'component.global.steps.stepTitle.preview' })} />
           </Steps>
 
           {step === 1 && <Step1 form={form1} />}
