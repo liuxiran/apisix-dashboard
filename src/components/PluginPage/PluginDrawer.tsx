@@ -78,7 +78,7 @@ const PluginDrawer: React.FC<Props> = ({
             {Boolean(active) && (
               <div>
                 <Button onClick={onClose}>
-                  {formatMessage({ id: 'component.global.button.cancel' })}
+                  {formatMessage({ id: 'component.global.cancel' })}
                 </Button>
                 <Button
                   type="primary"
@@ -87,7 +87,7 @@ const PluginDrawer: React.FC<Props> = ({
                     form.submit();
                   }}
                 >
-                  {formatMessage({ id: 'component.global.button.confirm' })}
+                  {formatMessage({ id: 'component.global.confirm' })}
                 </Button>
               </div>
             )}
