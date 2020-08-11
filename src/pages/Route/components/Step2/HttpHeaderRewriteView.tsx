@@ -42,27 +42,29 @@ const HttpHeaderRewriteView: React.FC<Props> = ({ data, disabled, onChange }) =>
 
   const columns = [
     {
-      title: formatMessage({ id: 'route.http.request.header.name' }),
+      title: formatMessage({ id: 'page.route.httpHeaderName' }),
       dataIndex: 'header_name',
       key: 'header_name',
     },
     {
-      title: formatMessage({ id: 'route.http.action' }),
+      title: formatMessage({ id: 'page.route.httpAction' }),
       dataIndex: 'header_action',
       key: 'header_action',
       render: (action: 'override' | 'remove') => {
-        return action === 'override' ? formatMessage({ id: 'route.http.override.or.create' }) : formatMessage({ id: 'route.http.delete' });
+        return action === 'override'
+          ? formatMessage({ id: 'page.route.httpOverrideOrCreate' })
+          : formatMessage({ id: 'component.global.delete' });
       },
     },
     {
-      title: formatMessage({ id: 'route.http.value' }),
+      title: formatMessage({ id: 'page.route.value' }),
       dataIndex: 'header_value',
       key: 'header_value',
     },
     disabled
       ? {}
       : {
-          title: formatMessage({ id: 'route.http.operation' }),
+          title: formatMessage({ id: 'component.global.operation' }),
           key: 'action',
           render: (_: any, record: RouteModule.UpstreamHeader) => (
             <Space size="middle">
@@ -71,14 +73,14 @@ const HttpHeaderRewriteView: React.FC<Props> = ({ data, disabled, onChange }) =>
                   handleEdit(record);
                 }}
               >
-                {formatMessage({ id: 'route.http.edit' })}
+                {formatMessage({ id: 'component.global.edit' })}
               </a>
               <a
                 onClick={() => {
                   handleRemove(record.key);
                 }}
               >
-                {formatMessage({ id: 'route.http.delete' })}
+                {formatMessage({ id: 'component.global.delete' })}
               </a>
             </Space>
           ),
@@ -114,7 +116,14 @@ const HttpHeaderRewriteView: React.FC<Props> = ({ data, disabled, onChange }) =>
 
     return (
       <Modal
-        title={mode === 'EDIT' ? formatMessage({ id: 'route.http.edit.request.header' }) : formatMessage({ id: 'route.http.operate.request.header' })}
+        title={`
+          ${
+            mode === 'EDIT'
+              ? formatMessage({ id: 'component.global.edit' })
+              : formatMessage({ id: 'component.global.operation' })
+          }
+          ${formatMessage({ id: 'page.route.httpRequestHeader' })}
+        `}
         centered
         visible
         onOk={handleOk}
@@ -122,33 +131,58 @@ const HttpHeaderRewriteView: React.FC<Props> = ({ data, disabled, onChange }) =>
           setVisible(false);
           modalForm.resetFields();
         }}
-        okText={formatMessage({ id: 'route.http.confirm' })}
-        cancelText={formatMessage({ id: 'route.http.cancel' })}
+        okText={formatMessage({ id: 'component.global.confirm' })}
+        cancelText={formatMessage({ id: 'component.global.cancel' })}
         destroyOnClose
       >
         <Form form={modalForm} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
           <Form.Item
-            label={formatMessage({ id: 'route.http.request.header.name' })}
+            label={formatMessage({ id: 'page.route.httpHeaderName' })}
             name="header_name"
-            rules={[{ required: true, message: formatMessage({ id: 'route.http.input.request.header.name' }) }]}
+            rules={[
+              {
+                required: true,
+                message: `${formatMessage({ id: 'component.global.pleaseEnter' })} ${formatMessage({
+                  id: 'page.route.httpHeaderName',
+                })}`,
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label={formatMessage({ id: 'route.http.action' })}
+            label={formatMessage({ id: 'page.route.httpAction' })}
             name="header_action"
-            rules={[{ required: true, message: formatMessage({ id: 'route.http.select.actions' }) }]}
+            rules={[
+              {
+                required: true,
+                message: `${formatMessage({
+                  id: 'component.global.pleaseChoose',
+                })} ${formatMessage({ id: 'page.route.httpAction' })}`,
+              },
+            ]}
           >
             <Select onChange={(e) => setShowModalValue(e === 'override')}>
-              <Select.Option value="override">{formatMessage({ id: 'route.http.override.or.create' })}</Select.Option>
-              <Select.Option value="remove">{formatMessage({ id: 'route.http.delete' })}</Select.Option>
+              <Select.Option value="override">
+                {formatMessage({ id: 'page.route.httpOverrideOrCreate' })}
+              </Select.Option>
+              <Select.Option value="remove">
+                {formatMessage({ id: 'component.global.delete' })}
+              </Select.Option>
             </Select>
           </Form.Item>
           {showModalValue && (
             <Form.Item
-              label={formatMessage({ id: 'route.http.value' })}
+              label={formatMessage({ id: 'page.route.value' })}
               name="header_value"
-              rules={[{ required: true, message: formatMessage({ id: 'route.http.input.value' }) }]}
+              rules={[
+                {
+                  required: true,
+                  message: `${formatMessage({
+                    id: 'component.global.pleaseEnter',
+                  })} ${formatMessage({ id: 'page.route.value' })}`,
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -159,7 +193,9 @@ const HttpHeaderRewriteView: React.FC<Props> = ({ data, disabled, onChange }) =>
   };
 
   return (
-    <PanelSection title={formatMessage({ id: 'route.http.override.request.header' })}>
+    <PanelSection
+      title={formatMessage({ id: 'page.route.panelSection.title.httpOverrideRequestHeader' })}
+    >
       {!disabled && (
         <Button
           onClick={() => {
@@ -172,7 +208,7 @@ const HttpHeaderRewriteView: React.FC<Props> = ({ data, disabled, onChange }) =>
             marginBottom: 16,
           }}
         >
-          {formatMessage({ id: 'route.http.operation' })}
+          {formatMessage({ id: 'component.global.operation' })}
         </Button>
       )}
       <Table key="table" bordered dataSource={upstreamHeaderList} columns={columns} />
