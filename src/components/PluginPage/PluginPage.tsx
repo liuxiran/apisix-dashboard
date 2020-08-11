@@ -20,12 +20,11 @@ import { omit } from 'lodash';
 import { JSONSchema7 } from 'json-schema';
 
 import PanelSection from '@/components/PanelSection';
-
+import { useIntl } from 'umi';
 import PluginCard from './PluginCard';
 import PluginDrawer from './PluginDrawer';
 import { getList, fetchPluginSchema } from './service';
 import { PLUGIN_MAPPER_SOURCE } from './data';
-import { useIntl } from 'umi';
 
 type Props = {
   disabled?: boolean;
@@ -42,11 +41,11 @@ const PluginPage: React.FC<Props> = ({ data = {}, disabled, onChange }) => {
 
   const pluginList = [
     {
-      title: formatMessage({ id: 'PluginPage.drawer.is.enabled' }),
+      title: formatMessage({ id: 'component.pluginPage.panelSection.title.isEnabled' }),
       list: activeList,
     },
     {
-      title: formatMessage({ id: 'PluginPage.drawer.not.enabled' }),
+      title: formatMessage({ id: 'component.pluginPage.panelSection.title.notEnabled' }),
       list: inactiveList,
     },
   ];
@@ -61,7 +60,10 @@ const PluginPage: React.FC<Props> = ({ data = {}, disabled, onChange }) => {
   return (
     <>
       {pluginList.map(({ list, title }) => {
-        if (disabled && title === formatMessage({ id: 'PluginPage.drawer.not.enabled' })) {
+        if (
+          disabled &&
+          title === formatMessage({ id: 'component.pluginPage.panelSection.title.notEnabled' })
+        ) {
           return null;
         }
         return (

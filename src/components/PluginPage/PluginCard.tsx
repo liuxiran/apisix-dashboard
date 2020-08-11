@@ -31,8 +31,8 @@ const PluginCard: React.FC<Props> = ({ name, actions }) => {
       <Card.Meta
         title={name}
         description={formatMessage({
-          id: `PluginPage.card.${name}.desc`,
-          defaultMessage: formatMessage({ id: 'PluginPage.card.refer.documents' }),
+          id: `component.pluginPage.pluginCard.${name}.description`,
+          defaultMessage: formatMessage({ id: 'component.pluginPage.pluginCard.defaultMessage' }),
         })}
       />
     </Card>

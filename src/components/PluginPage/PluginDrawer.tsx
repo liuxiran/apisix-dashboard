@@ -50,13 +50,12 @@ const PluginDrawer: React.FC<Props> = ({
   if (!name) {
     return null;
   }
-
   // NOTE: 用于作为 PluginForm 的引用
   let form: any;
 
   return (
     <Drawer
-      title={formatMessage({ id: 'PluginPage.drawer.configure.plugin' })}
+      title={formatMessage({ id: 'component.pluginPage.drawer.title.configurePlugin' })}
       width={400}
       visible={Boolean(name)}
       destroyOnClose
@@ -67,19 +66,19 @@ const PluginDrawer: React.FC<Props> = ({
             <div>
               {Boolean(active) && (
                 <Button type="primary" danger onClick={() => onInactive(name)}>
-                  {formatMessage({ id: 'PluginPage.drawer.disabled' })}
+                  {formatMessage({ id: 'component.pluginPage.button.disable' })}
                 </Button>
               )}
               {Boolean(!active) && (
                 <Button type="primary" onClick={() => onActive(name)}>
-                  {formatMessage({ id: 'PluginPage.drawer.enable' })}
+                  {formatMessage({ id: 'component.pluginPage.button.enable' })}
                 </Button>
               )}
             </div>
             {Boolean(active) && (
               <div>
                 <Button onClick={onClose}>
-                  {formatMessage({ id: 'PluginPage.drawer.cancel' })}
+                  {formatMessage({ id: 'component.global.button.cancel' })}
                 </Button>
                 <Button
                   type="primary"
@@ -88,7 +87,7 @@ const PluginDrawer: React.FC<Props> = ({
                     form.submit();
                   }}
                 >
-                  {formatMessage({ id: 'PluginPage.drawer.confirm' })}
+                  {formatMessage({ id: 'component.global.button.confirm' })}
                 </Button>
               </div>
             )}
