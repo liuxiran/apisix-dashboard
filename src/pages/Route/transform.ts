@@ -374,6 +374,11 @@ export const transformRouteDebugData = (data: RouteModule.Body) => {
           operationId: `${method.toLocaleLowerCase()}${path.split('/')[1]}`,
           parameters: [...formatParams],
           responses,
+          security: [
+            {
+              basicAuth: [],
+            },
+          ],
         },
       };
       // route contains *

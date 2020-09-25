@@ -35,6 +35,14 @@ const swaggerDataBase = {
       url: 'http://www.apache.org/licenses/LICENSE-2.0.html',
     },
   },
+  components: {
+    securitySchemes: {
+      basicAuth: {
+        type: 'http',
+        scheme: 'basic',
+      },
+    },
+  },
 };
 
 const Page: React.FC<DebugProps> = (props) => {
