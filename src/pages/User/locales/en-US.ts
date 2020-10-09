@@ -25,7 +25,7 @@ export default {
   'component.user.loginMethodPassword.incorrectPassword': 'Incorrect username or password',
   'component.user.loginMethodPassword.fieldInvalid': 'Please check username and password',
   'component.user.loginMethodPassword.success': 'Login Success',
-  'component.user.loginMethodExample': 'Example',
+  'component.user.loginMethodOauth': 'IDP Login',
   'component.user.loginMethodExample.message':
     'Example Login Method, It is only used as an extension example of login method and cannot be used.',
 };

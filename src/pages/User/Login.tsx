@@ -48,7 +48,7 @@ const Page: React.FC = () => {
 
   const onTabChange = (activeKey: string) => {
     loginMethods.forEach((item, index) => {
-      if (activeKey === item.id) setLoginMethod(loginMethods[index]);
+      if (activeKey === item.id && activeKey !== 'oauth') setLoginMethod(loginMethods[index]);
     });
   };
 

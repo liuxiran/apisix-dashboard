@@ -20,7 +20,7 @@ import React from 'react';
 declare namespace UserModule {
   interface LoginMethod {
     id: string;
-    name: string;
+    name: string | React.ReactElement;
     render: () => React.ReactElement;
     getData: () => LoginData;
     checkData: () => Promise<boolean>;

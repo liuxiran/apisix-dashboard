@@ -19,8 +19,10 @@ import { UserModule } from '@/pages/User/typing';
 import { formatMessage } from '@@/plugin-locale/localeExports';
 
 const LoginMethodExample: UserModule.LoginMethod = {
-  id: 'example',
-  name: formatMessage({ id: 'component.user.loginMethodExample' }),
+  id: 'oauth',
+  name: (
+    <a href="https://www.baidu.com">{formatMessage({ id: 'component.user.loginMethodOauth' })}</a>
+  ),
   render: () => {
     return <a href="https://www.example.com">example</a>;
   },
