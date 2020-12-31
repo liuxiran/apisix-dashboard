@@ -71,7 +71,7 @@ func DebugRequestForwarding(c droplet.Context) (interface{}, error) {
 		requestProtocol = "http"
 	}
 
-	protocolMap := make(map[string]ProtocolSupport)
+	protocolMap := make(map[string]ProtocolSupport, 2)
 	protocolMap["http"] = &HTTPProtocolSupport{}
 	protocolMap["https"] = &HTTPProtocolSupport{}
 
