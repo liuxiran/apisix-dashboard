@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import React, { useEffect, useState } from 'react';
-import { Anchor, Layout, Card, Button } from 'antd';
+import { Anchor, Layout, Card, Button, PageHeader } from 'antd';
 import { PanelSection } from '@api7-dashboard/ui';
 import { orderBy } from 'lodash';
 
@@ -31,10 +31,7 @@ type Props = {
 };
 
 const PanelSectionStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(5, 20%)',
-  gridRowGap: 15,
-  gridColumnGap: 10,
+  display: 'flex',
   width: 'calc(100% - 20px)',
 };
 
@@ -53,14 +50,24 @@ const PluginPage: React.FC<Props> = ({
   const [pluginList, setPluginList] = useState<PluginComponent.Meta[]>([]);
   const [name, setName] = useState<string>(NEVER_EXIST_PLUGIN_FLAG);
   const [typeList, setTypeList] = useState<string[]>([]);
+  const supportedPlugins = {
+    'key-auth': {},
+    'limit-count': {type:'traffic'},
+    'limit-req': {type: 'traffic'},
+    'request-validation': {type: 'paramter'},
+    'response-rewrite': {type:'paramter'},
+  }
 
   const firstUpperCase = ([first, ...rest]: string) => first.toUpperCase() + rest.join('');
   useEffect(() => {
     fetchList().then((data) => {
-      setPluginList(data);
-
+      const localPluginData = data.filter((item) => Object.keys(supportedPlugins).includes(item.name)).map((item) => {
+        return {...item, ...supportedPlugins[item.name]}
+      });
       const categoryList: string[] = [];
-      data.forEach((item) => {
+
+      setPluginList(localPluginData);
+      localPluginData.forEach((item) => {
         if (!categoryList.includes(firstUpperCase(item.type))) {
           categoryList.push(firstUpperCase(item.type));
         }
@@ -71,15 +78,7 @@ const PluginPage: React.FC<Props> = ({
 
   const PluginList = () => (
     <>
-      <Sider theme="light">
-        <Anchor offsetTop={150}>
-          {/* eslint-disable-next-line no-shadow */}
-          {typeList.map((type) => {
-            return <Anchor.Link href={`#plugin-category-${type}`} title={type} key={type} />;
-          })}
-        </Anchor>
-      </Sider>
-      <Content style={{ padding: '0 10px', backgroundColor: '#fff', minHeight: 1400 }}>
+      <Content style={{ padding: '0 10px', backgroundColor: '#fff' }}>
         {/* eslint-disable-next-line no-shadow */}
         {typeList.map((type) => {
           return (
@@ -94,35 +93,27 @@ const PluginPage: React.FC<Props> = ({
                 'name',
                 'asc',
               ).map((item) => (
-                <Card
-                  key={item.name}
-                  actions={[
+                <PageHeader
+                  className="site-page-header"
+                  backIcon={false}
+                  title={item.name}
+                  style={{border: '1px solid rgb(235, 237, 240)', marginLeft: 10}}
+                  extra={[
                     <Button
-                      type={
-                        initialData[item.name] && !initialData[item.name].disable
-                          ? 'primary'
-                          : 'default'
-                      }
-                      onClick={() => {
-                        setName(item.name);
-                      }}
-                    >
-                      Enable
-                    </Button>,
+                    type={
+                      initialData[item.name] && !initialData[item.name].disable
+                        ? 'primary'
+                        : 'default'
+                    }
+                    onClick={() => {
+                      setName(item.name);
+                    }}
+                  >
+                    Enable
+                  </Button>
                   ]}
-                  bodyStyle={{
-                    height: 151,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                  }}
-                  title={[
-                    <div style={{ width: '100%', textAlign: 'center' }}>
-                      <span key={2}>{item.name}</span>
-                    </div>,
-                  ]}
-                  style={{ height: 258, width: 200 }}
                 />
+                
               ))}
             </PanelSection>
           );
@@ -132,7 +123,7 @@ const PluginPage: React.FC<Props> = ({
   );
 
   const Plugin = () => (
-    <Content style={{ padding: '0 10px', backgroundColor: '#fff', minHeight: 1400 }}>
+    <Content style={{ padding: '0 10px', backgroundColor: '#fff' }}>
       <PluginDetail
         name={name}
         readonly={readonly}
