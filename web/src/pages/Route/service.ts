@@ -109,6 +109,7 @@ export const updateRouteStatus = (rid: string, status: RouteModule.RouteStatus) 
 export const debugRoute = (data: RouteModule.debugRequest) => {
   return request('/debug-request-forwarding', {
     method: 'post',
+    requestType: 'form',
     data,
   });
 };

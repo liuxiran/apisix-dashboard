@@ -60,7 +60,7 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
   enum DebugBodyType {
     None = 0,
     FormUrlencoded,
-    Json,
+    FormData,
     RawInput,
   }
 
@@ -80,20 +80,25 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
   const transformBodyParamsFormData = () => {
     let transformDataForm: string[];
     let transformDataJson: object;
+    console.log(bodyType)
     const formData: RouteModule.debugRequestParamsFormData[] = bodyForm.getFieldsValue().params;
     if (methodWithoutBody.includes(httpMethod)) {
       return undefined
     }
+    console.log(bodyType)
     switch (bodyType) {
-      case 'x-www-form-urlencoded':
+      case DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormUrlencoded]:
+      case DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormData]:
         transformDataForm = (formData || [])
           .filter((data) => data.check)
           .map((data) => {
+            console.log(data.key)
+            console.log(data.value)
             return `${data.key}=${data.value}`;
           });
 
         return transformDataForm.join('&');
-      case 'json':
+      /* 
         transformDataJson = {};
         (formData || [])
           .filter((data) => data.check)
@@ -104,10 +109,10 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
             };
           });
 
-        return JSON.stringify(transformDataJson);
-      case 'raw input':
+        return JSON.stringify(transformDataJson); */
+      case DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.RawInput]:
         return bodyCodeMirrorRef.current.editor.getValue();
-      case 'none':
+      case DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.None]:
       default:
         return undefined;
     }
@@ -116,6 +121,9 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
   const transformHeaderAndQueryParamsFormData = (
     formData: RouteModule.debugRequestParamsFormData[],
   ) => {
+    console.log('------')
+    console.log(formData);
+    console.log('-------')
     let transformData = {};
     (formData || [])
       .filter((data) => data && data.check)
@@ -292,15 +300,15 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
                     defaultValue={bodyCodeMirrorMode}
                   >
                     {DEBUG_BODY_CODEMIRROR_MODE_SUPPORTED.map((modeObj) => (
-                      <Select.Option key={modeObj.name} value={modeObj.mode}>
+                      <Option key={modeObj.name} value={modeObj.mode}>
                         {modeObj.name}
-                      </Select.Option>
+                      </Option>
                     ))}
                   </Select>
                 )}
                 <div style={{ marginTop: 16 }}>
                   {(bodyType === DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormUrlencoded] ||
-                    bodyType === DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.Json]) && (
+                    bodyType === DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormData]) && (
                     <DebugParamsView form={bodyForm} />
                   )}
 

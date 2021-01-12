@@ -179,6 +179,9 @@ const PluginDetail: React.FC<Props> = ({
               onClick={() => {
                 try {
                   const editorData = JSON.parse(ref.current?.editor.getValue());
+                  console.log('in editor data')
+                  console.log(editorData)
+                  console.log('------')
                   validateData(name, editorData).then((value) => {
                     onChange({ formData: form.getFieldsValue(), codemirrorData: value });
                   });

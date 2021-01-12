@@ -93,9 +93,10 @@ export const PROTOCOL_SUPPORTED: RouteModule.debugRequest['request_protocol'][] 
 export const DEFAULT_DEBUG_PARAM_FORM_DATA = {
   params: [
     {
-      check: false,
+      check: true,
       key: '',
       value: '',
+      valueType: 'text',
     },
   ],
   type: 'json',
@@ -108,7 +109,7 @@ export const DEFAULT_DEBUG_AUTH_FORM_DATA = {
 export const DEBUG_BODY_TYPE_SUPPORTED: RouteModule.DebugBodyType[] = [
   'none',
   'x-www-form-urlencoded',
-  'json',
+  'form-data',
   'raw input',
 ];
 
