@@ -26,7 +26,8 @@ import styles from './index.less';
 const DebugParamsView: React.FC<RouteModule.DebugViewProps> = (props) => {
   const { formatMessage } = useIntl();
   const [valueType, setValueType] = useState(['text']);
-  const [uploadFile, setUploadFile] = useState([])
+  const [uploadFile, setUploadFile] = useState([]);
+  const [uploadFileObj, setUploadFileObj] = useState([]);
   
   return (
     <Form name="dynamic_form_nest_item" className={styles.routeDebugDraw} form={props.form}>
@@ -97,12 +98,27 @@ const DebugParamsView: React.FC<RouteModule.DebugViewProps> = (props) => {
                           if (Array.isArray(e)) {
                             return e;
                           }
-                          return e && e.fileList;
+                          console.log('in getValueFromEvent')
+                          console.log(e.fileList)
+                          console.log(uploadFileObj[index])
+                          console.log('------')
+                          return e && uploadFileObj[index];
+
                         }} valuePropName="file">
-                          <Upload fileList={[]} onChange={(info) => {
-                            uploadFile.splice(index,1,info.file.name)
-                            setUploadFile([...uploadFile])
-                          }}>
+                          <Upload 
+                            fileList={[]}
+                            onChange={(info) => {
+                              uploadFile.splice(index,1,info.file.name)
+                              setUploadFile([...uploadFile])
+                            }}
+                            beforeUpload={(file) => {
+                              console.log('in before upload')
+                              console.log(file)
+                              uploadFileObj.splice(index,1,file)
+                              setUploadFileObj([...uploadFileObj]);
+                              return false;
+                            }}
+                          >
                             <Input disabled value={uploadFile[index]}
                               placeholder='点击上传文件'
                             />

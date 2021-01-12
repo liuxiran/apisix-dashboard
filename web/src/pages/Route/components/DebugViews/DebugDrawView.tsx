@@ -89,15 +89,21 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
     switch (bodyType) {
       case DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormUrlencoded]:
       case DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormData]:
+        const bodyParamsForm = new FormData();
+
         transformDataForm = (formData || [])
           .filter((data) => data.check)
           .map((data) => {
+            console.log('in bodyparam')
+
             console.log(data.key)
             console.log(data.value)
+            bodyParamsForm.append(data.key, data.value)
             return `${data.key}=${data.value}`;
           });
 
-        return transformDataForm.join('&');
+        // return transformDataForm.join('&');
+        return bodyParamsForm;
       /* 
         transformDataJson = {};
         (formData || [])
@@ -180,15 +186,16 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
     const headerFormData = transformAuthFormData(authForm.getFieldsValue(), pureHeaderFormData);
     const urlQueryString = queryString.stringify(queryFormData);
 
+    const formdata = new FormData();
+
+    formdata.append('url', `${requestProtocol}://${url}${urlQueryString && `?${urlQueryString}`}`);
+    formdata.append('request_protocol', requestProtocol);
+    formdata.append('method', httpMethod);
+    formdata.append('body_params', bodyFormData);
+    formdata.append('header_params', headerFormData);
     setLoading(true);
     // TODO: grpc and websocket
-    debugRoute({
-      url: `${requestProtocol}://${url}${urlQueryString && `?${urlQueryString}`}`,
-      request_protocol: requestProtocol,
-      method: httpMethod,
-      body_params: bodyFormData,
-      header_params: headerFormData,
-    })
+    debugRoute(formdata)
       .then((req) => {
         setLoading(false);
         setResponseCode(JSON.stringify(req.data.data, null, 2));
