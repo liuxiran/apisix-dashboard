@@ -268,13 +268,13 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
         >
           <Tabs>
             <TabPane tab={formatMessage({ id: 'page.route.TabPane.queryParams' })} key="query">
-              <DebugParamsView form={queryForm} />
+              <DebugParamsView form={queryForm} disableTypeSelect={true}/>
             </TabPane>
             <TabPane tab={formatMessage({ id: 'page.route.TabPane.authentication' })} key="auth">
-              <AuthenticationView form={authForm} />
+              <AuthenticationView form={authForm} disableTypeSelect={true}/>
             </TabPane>
             <TabPane tab={formatMessage({ id: 'page.route.TabPane.headerParams' })} key="header">
-              <DebugParamsView form={headerForm} />
+              <DebugParamsView form={headerForm} disableTypeSelect={true}/>
             </TabPane>
             {showBodyTab && (
               <TabPane tab={formatMessage({ id: 'page.route.TabPane.bodyParams' })} key="body">
@@ -309,7 +309,7 @@ const DebugDrawView: React.FC<RouteModule.DebugDrawProps> = (props) => {
                 <div style={{ marginTop: 16 }}>
                   {(bodyType === DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormUrlencoded] ||
                     bodyType === DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.FormData]) && (
-                    <DebugParamsView form={bodyForm} />
+                    <DebugParamsView form={bodyForm} disableTypeSelect={false}/>
                   )}
 
                   {bodyType === DEBUG_BODY_TYPE_SUPPORTED[DebugBodyType.RawInput] && (

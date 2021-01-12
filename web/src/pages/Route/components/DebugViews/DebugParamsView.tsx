@@ -27,7 +27,7 @@ const DebugParamsView: React.FC<RouteModule.DebugViewProps> = (props) => {
   const { formatMessage } = useIntl();
   const [valueType, setValueType] = useState(['text']);
   const [uploadFile, setUploadFile] = useState([])
-
+  
   return (
     <Form name="dynamic_form_nest_item" className={styles.routeDebugDraw} form={props.form}>
       <Form.List name="params">
@@ -76,7 +76,7 @@ const DebugParamsView: React.FC<RouteModule.DebugViewProps> = (props) => {
                           valueType.splice(index,1,value)
                           setValueType([...valueType])
                           console.log('----------------------')
-                        }} >
+                        }} disabled={props.disableTypeSelect}>
                           <Select.Option value='text'>Text</Select.Option>
                           <Select.Option value='file'>File</Select.Option>
                         </Select>

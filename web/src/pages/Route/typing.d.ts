@@ -270,6 +270,7 @@ declare namespace RouteModule {
   };
   type DebugViewProps = {
     form: FormInstance;
+    disableTypeSelect?: boolean;
   };
   type DebugBodyType = 'none' | 'x-www-form-urlencoded' | 'form-data' | 'raw input';
   type DebugDodyViewProps = {
