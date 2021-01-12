@@ -76,7 +76,7 @@ const DebugParamsView: React.FC<RouteModule.DebugViewProps> = (props) => {
                           valueType.splice(index,1,value)
                           setValueType([...valueType])
                           console.log('----------------------')
-                        }}>
+                        }} >
                           <Select.Option value='text'>Text</Select.Option>
                           <Select.Option value='file'>File</Select.Option>
                         </Select>
@@ -104,9 +104,7 @@ const DebugParamsView: React.FC<RouteModule.DebugViewProps> = (props) => {
                             setUploadFile([...uploadFile])
                           }}>
                             <Input disabled value={uploadFile[index]}
-                              placeholder={formatMessage({
-                                id: 'page.route.input.placeholder.paramValue',
-                              })}
+                              placeholder='点击上传文件'
                             />
                           </Upload>
                         </Form.Item>
