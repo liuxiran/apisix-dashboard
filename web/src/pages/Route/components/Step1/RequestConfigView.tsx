@@ -384,11 +384,7 @@ const RequestConfigView: React.FC<RouteModule.Step1PassProps> = ({
         }}
       </Form.Item>
       <Form.Item label={formatMessage({ id: 'page.route.service' })} name="service_id">
-        <Select disabled={disabled}>
-          {/* TODO: value === '' means  no service_id select, need to find a better way */}
-          <Select.Option value="" key={Math.random().toString(36).substring(7)}>
-            None
-          </Select.Option>
+        <Select disabled={disabled} allowClear>
           {serviceList.map((item) => {
             return (
               <Select.Option value={item.id} key={item.id}>
