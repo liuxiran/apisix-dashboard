@@ -55,6 +55,12 @@ export const DEFAULT_STEP_1_DATA: RouteModule.Form1Data = {
   ret_code: 302,
   methods: HTTP_METHOD_OPTION_LIST,
   service_id: '',
+  proxyRewrite: {
+    scheme: 'keep',
+  },
+  URIRewriteType: 0,
+  hostRewriteType: 0,
+
 };
 
 export const DEFAULT_STEP_3_DATA: RouteModule.Step3Data = {

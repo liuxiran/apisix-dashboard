@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { omit, pick, cloneDeep } from 'lodash';
+import { omit, pick, cloneDeep, isEmpty } from 'lodash';
 
 import { transformLableValueToKeyValue } from '@/helpers';
 
@@ -25,9 +25,29 @@ export const transformStepData = ({
   advancedMatchingRules,
   step3Data,
 }: RouteModule.RequestData) => {
-  const { custom_normal_labels, custom_version_label, service_id = '' } = form1Data;
+  const { custom_normal_labels, custom_version_label, service_id = ''} = form1Data;
 
   let redirect: RouteModule.Redirect = {};
+  let proxyRewriteFormData: RouteModule.ProxyRewrite = form1Data.proxyRewrite;
+  let plugins: any = {};
+  const proxyRewriteConfig = transformProxyRewrite(proxyRewriteFormData);
+  
+  console.log('------form1Data-----')
+  console.log(form1Data)
+  console.log('--------------')
+  console.log('------formdata-----')
+  console.log(proxyRewriteFormData)
+  console.log('---------')
+  if (!isEmpty(proxyRewriteConfig)){
+    plugins = {
+      ...plugins,
+      'proxy-rewrite': proxyRewriteConfig
+    }
+  }
+  console.log('----plugins---')
+  console.log(plugins)
+  console.log('---------')
+
   const step3DataCloned = cloneDeep(step3Data);
   if (form1Data.redirectOption === 'disabled') {
     step3DataCloned.plugins = omit(step3Data.plugins, ['redirect']);
@@ -44,10 +64,14 @@ export const transformStepData = ({
   transformLableValueToKeyValue(custom_normal_labels).forEach(({ labelKey, labelValue }) => {
     labels[labelKey] = labelValue;
   });
+
+
   if (custom_version_label) {
     labels.API_VERSION = custom_version_label;
   }
-
+  console.log('----form1Data----');
+  console.log(form1Data)
+  console.log('------')
   const data: Partial<RouteModule.Body> = {
     ...form1Data,
     labels,
@@ -69,7 +93,12 @@ export const transformStepData = ({
     }),
     // @ts-ignore
     methods: form1Data.methods.includes('ALL') ? [] : form1Data.methods,
+    status: Number(form1Data.status),
   };
+
+  console.log('------');
+  console.log(data);
+  console.log('------');
 
   if (Object.keys(redirect).length === 0 || redirect.http_to_https) {
     if (form2Data.upstream_id) {
@@ -79,15 +108,12 @@ export const transformStepData = ({
     }
 
     if (redirect.http_to_https) {
+      console.log(data.plugins)
       if (Object.keys(data.plugins || {}).length === 0) {
         data.plugins = {};
       }
       data.plugins!.redirect = redirect;
     }
-    if (data.status !== undefined) {
-      data.status = Number(data.status);
-    }
-
     // Remove some of the frontend custom variables
     return omit(data, [
       'custom_version_label',
@@ -99,6 +125,8 @@ export const transformStepData = ({
       'redirectURI',
       'ret_code',
       'redirectOption',
+      'URIRewriteType',
+      'hostRewriteType',
       service_id.length === 0 ? 'service_id' : '',
       form2Data.upstream_id === 'None' ? 'upstream_id' : '',
       !Object.keys(data.plugins || {}).length ? 'plugins' : '',
@@ -111,7 +139,10 @@ export const transformStepData = ({
   }
 
   if (Object.keys(redirect).length) {
-    data.plugins = { redirect };
+    data.plugins = { 
+      ...data.plugins,
+      redirect 
+    };
   }
 
   return pick(data, [
@@ -231,3 +262,55 @@ export const transformRouteData = (data: RouteModule.Body) => {
     advancedMatchingRules,
   };
 };
+
+export const transformLabelList = (data: RouteModule.ResponseLabelList) => {
+  if (!data) {
+    return {};
+  }
+  const transformData = {};
+  data.forEach((item) => {
+    const key = Object.keys(item)[0];
+    const value = item[key];
+    if (!transformData[key]) {
+      transformData[key] = [];
+      transformData[key].push(value);
+      return;
+    }
+
+    if (transformData[key] && !transformData[key][value]) {
+      transformData[key].push(value);
+    }
+  });
+  return transformData;
+};
+
+const transformProxyRewrite = (data: RouteModule.ProxyRewrite): RouteModule.ProxyRewrite => {
+  let omitFieldsList:string[] = ['kvHeaders'];
+  let headers: Record<string, string> = {};
+
+  if (data.scheme !== 'http' && data.scheme !== 'https') {
+    omitFieldsList = [
+      ...omitFieldsList,
+      'scheme',
+    ]
+  }
+
+  (data.kvHeaders || []).forEach((kvHeader) => {
+    if (kvHeader.key) {
+      // support value to be an empty string, which means remove a header
+      headers = {
+        ...headers,
+        [kvHeader.key]: kvHeader.value || '',
+      };
+    }
+  });
+
+  if(!isEmpty(headers)) {
+    return omit({
+      ...data,
+      headers,
+    }, omitFieldsList);
+  }
+
+  return omit(data, omitFieldsList);
+}
