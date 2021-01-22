@@ -69,6 +69,8 @@ const Page: React.FC = () => {
     {
       title: formatMessage({ id: 'component.global.name' }),
       dataIndex: 'name',
+      ellipsis: true,
+      width: 200,
     },
     {
       title: formatMessage({ id: 'page.route.domainName' }),
@@ -99,6 +101,8 @@ const Page: React.FC = () => {
       title: formatMessage({ id: 'component.global.description' }),
       dataIndex: 'desc',
       hideInSearch: true,
+      ellipsis: true,
+      width: 200,
     },
     {
       title: formatMessage({ id: 'component.global.labels' }),
