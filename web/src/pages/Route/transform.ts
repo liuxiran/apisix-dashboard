@@ -29,24 +29,16 @@ export const transformStepData = ({
 
   let redirect: RouteModule.Redirect = {};
   let proxyRewriteFormData: RouteModule.ProxyRewrite = form1Data.proxyRewrite;
-  let plugins: any = {};
-  const proxyRewriteConfig = transformProxyRewrite(proxyRewriteFormData);
+  let proxyRewritePlugin: any = {};
+  const proxyRewriteConfig = transformProxyRewrite2Plugin(proxyRewriteFormData);
   
-  console.log('------form1Data-----')
-  console.log(form1Data)
-  console.log('--------------')
-  console.log('------formdata-----')
-  console.log(proxyRewriteFormData)
-  console.log('---------')
   if (!isEmpty(proxyRewriteConfig)){
-    plugins = {
-      ...plugins,
-      'proxy-rewrite': proxyRewriteConfig
+    proxyRewritePlugin = {
+      plugins: {
+        'proxy-rewrite': proxyRewriteConfig
+      }
     }
   }
-  console.log('----plugins---')
-  console.log(plugins)
-  console.log('---------')
 
   const step3DataCloned = cloneDeep(step3Data);
   if (form1Data.redirectOption === 'disabled') {
@@ -69,13 +61,11 @@ export const transformStepData = ({
   if (custom_version_label) {
     labels.API_VERSION = custom_version_label;
   }
-  console.log('----form1Data----');
-  console.log(form1Data)
-  console.log('------')
   const data: Partial<RouteModule.Body> = {
     ...form1Data,
     labels,
     ...step3DataCloned,
+    ...proxyRewritePlugin,
     vars: advancedMatchingRules.map((rule) => {
       const { operator, position, name, value } = rule;
       let key = '';
@@ -127,6 +117,7 @@ export const transformStepData = ({
       'redirectOption',
       'URIRewriteType',
       'hostRewriteType',
+      'proxyRewrite',
       service_id.length === 0 ? 'service_id' : '',
       form2Data.upstream_id === 'None' ? 'upstream_id' : '',
       !Object.keys(data.plugins || {}).length ? 'plugins' : '',
@@ -239,6 +230,7 @@ export const transformRouteData = (data: RouteModule.Body) => {
     form1Data.redirectOption = 'disabled';
   }
 
+  /* const proxyRewritePlugin = data.plugins?['proxy-rewrite'] || {} */
   const advancedMatchingRules: RouteModule.MatchingRule[] = transformVarsToRules(vars);
 
   if (upstream && Object.keys(upstream).length) {
@@ -284,7 +276,7 @@ export const transformLabelList = (data: RouteModule.ResponseLabelList) => {
   return transformData;
 };
 
-const transformProxyRewrite = (data: RouteModule.ProxyRewrite): RouteModule.ProxyRewrite => {
+const transformProxyRewrite2Plugin = (data: RouteModule.ProxyRewrite): RouteModule.ProxyRewrite => {
   let omitFieldsList:string[] = ['kvHeaders'];
   let headers: Record<string, string> = {};
 
@@ -314,3 +306,7 @@ const transformProxyRewrite = (data: RouteModule.ProxyRewrite): RouteModule.Prox
 
   return omit(data, omitFieldsList);
 }
+
+/* const transformProxyRewrite2Formdata = (pluginsData: any): RouteModule.ProxyRewrite => {
+
+} */
