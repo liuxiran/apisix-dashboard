@@ -14,9 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { omit, pick, cloneDeep, isEmpty } from 'lodash';
+import { omit, pick, cloneDeep, isEmpty, unset } from 'lodash';
 
 import { transformLableValueToKeyValue } from '@/helpers';
+import {
+  ShcemeRewrite,
+  URIRewriteType,
+  HostRewriteType
+} from '@/pages/Route/constants';
 
 // Transform Route data then sent to API
 export const transformStepData = ({
@@ -31,14 +36,6 @@ export const transformStepData = ({
   let proxyRewriteFormData: RouteModule.ProxyRewrite = form1Data.proxyRewrite;
   let proxyRewritePlugin: any = {};
   const proxyRewriteConfig = transformProxyRewrite2Plugin(proxyRewriteFormData);
-  
-  if (!isEmpty(proxyRewriteConfig)){
-    proxyRewritePlugin = {
-      plugins: {
-        'proxy-rewrite': proxyRewriteConfig
-      }
-    }
-  }
 
   const step3DataCloned = cloneDeep(step3Data);
   if (form1Data.redirectOption === 'disabled') {
@@ -65,7 +62,6 @@ export const transformStepData = ({
     ...form1Data,
     labels,
     ...step3DataCloned,
-    ...proxyRewritePlugin,
     vars: advancedMatchingRules.map((rule) => {
       const { operator, position, name, value } = rule;
       let key = '';
@@ -86,9 +82,16 @@ export const transformStepData = ({
     status: Number(form1Data.status),
   };
 
-  console.log('------');
-  console.log(data);
-  console.log('------');
+  if (!isEmpty(proxyRewriteConfig)){
+    if (Object.keys(data.plugins || {}).length === 0) {
+      data.plugins = {};
+    }
+    data.plugins!['proxy-rewrite'] = proxyRewriteConfig;
+  } else {
+    console.log('hhhhhhh')
+    unset(data.plugins, ['proxy-rewrite']);
+
+  }
 
   if (Object.keys(redirect).length === 0 || redirect.http_to_https) {
     if (form2Data.upstream_id) {
@@ -98,12 +101,12 @@ export const transformStepData = ({
     }
 
     if (redirect.http_to_https) {
-      console.log(data.plugins)
       if (Object.keys(data.plugins || {}).length === 0) {
         data.plugins = {};
       }
       data.plugins!.redirect = redirect;
     }
+
     // Remove some of the frontend custom variables
     return omit(data, [
       'custom_version_label',
@@ -230,6 +233,13 @@ export const transformRouteData = (data: RouteModule.Body) => {
     form1Data.redirectOption = 'disabled';
   }
 
+  const proxyRewrite = data.plugins ? data.plugins['proxy-rewrite'] : {};
+  const { proxyRewriteData, uriRewriteType, hostRewriteType } = transformProxyRewrite2Formdata(proxyRewrite);
+  form1Data['proxyRewrite'] = proxyRewriteData;
+  form1Data['URIRewriteType'] = uriRewriteType;
+  form1Data['hostRewriteType'] = hostRewriteType;
+
+
   /* const proxyRewritePlugin = data.plugins?['proxy-rewrite'] || {} */
   const advancedMatchingRules: RouteModule.MatchingRule[] = transformVarsToRules(vars);
 
@@ -255,7 +265,7 @@ export const transformRouteData = (data: RouteModule.Body) => {
   };
 };
 
-export const transformLabelList = (data: RouteModule.ResponseLabelList) => {
+export const transformLabelList = (data: ResponseLabelList) => {
   if (!data) {
     return {};
   }
@@ -307,6 +317,55 @@ const transformProxyRewrite2Plugin = (data: RouteModule.ProxyRewrite): RouteModu
   return omit(data, omitFieldsList);
 }
 
-/* const transformProxyRewrite2Formdata = (pluginsData: any): RouteModule.ProxyRewrite => {
+const transformProxyRewrite2Formdata = (pluginsData: any) => {
+  let proxyRewriteData = {
+    scheme: ShcemeRewrite.KEEP
+  };
+  let uriRewriteType = URIRewriteType.KEEP;
+  let hostRewriteType = HostRewriteType.KEEP;
 
-} */
+  if (pluginsData) {
+    if (pluginsData.uri && pluginsData.regex_uri) {
+      uriRewriteType = URIRewriteType.REGEXP
+    }
+
+    if (pluginsData.uri && !pluginsData.regex_uri) {
+      uriRewriteType = URIRewriteType.STATIC
+    }
+
+    if (pluginsData.host) {
+      hostRewriteType = HostRewriteType.REWRITE
+    }
+
+    Object.keys(pluginsData).forEach( key => {
+      switch (key) {
+        case 'scheme':
+          proxyRewriteData[key] = pluginsData[key] === ShcemeRewrite.HTTP || pluginsData[key] === ShcemeRewrite.HTTPS ? pluginsData[key] : ShcemeRewrite.KEEP;
+          break;
+        case 'uri':
+        case 'regex_uri':
+        case 'host':
+          proxyRewriteData[key] = pluginsData[key];
+          break;
+        case 'headers':
+          Object.keys(pluginsData[key]).forEach((headerKey) => {
+            proxyRewriteData['kvHeaders'] = [
+              ...(proxyRewriteData['kvHeaders'] || []),
+              {
+                key: headerKey,
+                value: pluginsData[key][headerKey]
+              }
+            ]
+          })
+          break;
+        default: break;
+      }
+    })
+  }
+
+  return {
+    proxyRewriteData,
+    uriRewriteType,
+    hostRewriteType,
+  }
+}

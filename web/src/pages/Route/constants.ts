@@ -40,6 +40,21 @@ export const FORM_ITEM_WITHOUT_LABEL = {
   },
 };
 
+export enum ShcemeRewrite {
+  KEEP = 'keep',
+  HTTP = 'http',
+  HTTPS = 'https',
+}
+export enum URIRewriteType {
+  KEEP = 0,
+  STATIC,
+  REGEXP,
+}
+export enum HostRewriteType {
+  KEEP = 0,
+  REWRITE,
+}
+
 export const DEFAULT_STEP_1_DATA: RouteModule.Form1Data = {
   name: '',
   desc: '',
@@ -58,8 +73,8 @@ export const DEFAULT_STEP_1_DATA: RouteModule.Form1Data = {
   proxyRewrite: {
     scheme: 'keep',
   },
-  URIRewriteType: 0,
-  hostRewriteType: 0,
+  URIRewriteType: URIRewriteType.KEEP,
+  hostRewriteType: HostRewriteType.KEEP,
 
 };
 

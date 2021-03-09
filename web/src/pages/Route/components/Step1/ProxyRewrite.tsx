@@ -24,24 +24,13 @@ import { PanelSection } from '@api7-dashboard/ui';
 import {
   FORM_ITEM_LAYOUT,
   FORM_ITEM_WITHOUT_LABEL,
+  ShcemeRewrite,
+  URIRewriteType,
+  HostRewriteType
 } from '@/pages/Route/constants';
 
 const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) => {
   const { formatMessage } = useIntl();
-  enum ShcemeRewrite {
-    KEEP = 'keep',
-    HTTP = 'http',
-    HTTPS = 'https',
-  }
-  enum URIRewriteType {
-    KEEP = 0,
-    STATIC,
-    REGEXP,
-  }
-  enum HostRewriteType {
-    KEEP = 0,
-    REWRITE,
-  }
 
   const getUriRewriteItems = () => {
     switch (form.getFieldValue('URIRewriteType')) {
