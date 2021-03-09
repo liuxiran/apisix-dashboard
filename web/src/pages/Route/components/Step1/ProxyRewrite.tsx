@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Form from 'antd/es/form';
 import { Button, Input, Radio, Row, Col } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
@@ -42,11 +42,9 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
     KEEP = 0,
     REWRITE,
   }
-  const [uriRewrite, setUriRewrite] = useState<URIRewriteType>(URIRewriteType.KEEP);
-  const [hostRewrite, setHostRewrite] = useState<HostRewriteType>(HostRewriteType.KEEP);
 
   const getUriRewriteItems = () => {
-    switch (uriRewrite) {
+    switch (form.getFieldValue('URIRewriteType')) {
       case URIRewriteType.STATIC:
         return (
           <Form.Item
@@ -83,6 +81,7 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
                       <Form.Item
                         label={formatMessage({ id: 'page.route.form.itemLabel.regx' })}
                         name={field.name}
+                        key={field.name}
                         rules={[
                           {
                             required: true,
@@ -105,6 +104,7 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
                       <Form.Item
                         label={formatMessage({ id: 'page.route.form.itemLabel.template' })}
                         name={field.name}
+                        key={field.name}
                         rules={[
                           {
                             required: true,
@@ -129,14 +129,14 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
             }
           </Form.List>
         );
-      case URIRewriteType.REGEXP:
+      case URIRewriteType.KEEP:
       default:
         return null;
     }
   };
 
   const getHostRewriteItems = () => {
-    switch (hostRewrite) {
+    switch (form.getFieldValue('hostRewriteType')) {
       case HostRewriteType.REWRITE:
         return (
           <Form.Item
@@ -186,9 +186,6 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
         name='URIRewriteType'
       >
         <Radio.Group
-          onChange={(e) => {
-            setUriRewrite(e.target.value);
-          }}
           disabled={disabled}
         >
           <Radio value={URIRewriteType.KEEP}>
@@ -202,16 +199,20 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
           </Radio>
         </Radio.Group>
       </Form.Item>
-      {getUriRewriteItems()}
+      <Form.Item shouldUpdate={
+        (prevValues, curValues) => prevValues.URIRewriteType !== curValues.URIRewriteType } noStyle>
+        {
+          () => {
+            return getUriRewriteItems()
+          }
+        }
+      </Form.Item>
 
       <Form.Item
         label={formatMessage({ id: 'page.route.form.itemLabel.hostRewriteType' })}
         name='hostRewriteType'
       >
         <Radio.Group
-          onChange={(e) => {
-            setHostRewrite(e.target.value);
-          }}
           disabled={disabled}
         >
           <Radio value={HostRewriteType.KEEP}>
@@ -222,7 +223,13 @@ const ProxyRewrite: React.FC<RouteModule.Step1PassProps> = ({ form, disabled }) 
           </Radio>
         </Radio.Group>
       </Form.Item>
-      {getHostRewriteItems()}
+      <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.hostRewriteType !== curValues.hostRewriteType} noStyle>
+        {
+          () =>{
+            return getHostRewriteItems();
+          }
+        }
+      </Form.Item>
 
       <Form.List 
         name={['proxyRewrite', 'kvHeaders']}
